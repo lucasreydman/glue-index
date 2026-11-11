@@ -1,6 +1,6 @@
 # GLUE Index
 
-**G**ritty, **L**ow-**U**sage, **E**rror-free. An NBA index for the players who win possessions and avoid
+**G**ritty, **L**ow-**U**sage, **E**rrorless. An NBA index for the players who win possessions and avoid
 mistakes without needing the ball: seven credits, seven debits, each z-scored and weighted.
 
 The site shows the top glue guys of every night, season leaderboards back to 2005-06, career totals

@@ -69,7 +69,7 @@ export default async function MethodPage() {
             <b>L</b>ow-<b>U</b>sage
           </span>
           <span>
-            <b>E</b>rror-free
+            <b>E</b>rrorless
           </span>
         </p>
 
