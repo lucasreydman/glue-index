@@ -16,7 +16,7 @@ export function CountUp({ value, places = 2 }: { value: number; places?: number 
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / DURATION);
+      const t = Math.min(1, Math.max(0, (now - start) / DURATION));
       const eased = 1 - (1 - t) ** 4;
       el.textContent = signed(value * eased, places);
       if (t < 1) frame = requestAnimationFrame(tick);

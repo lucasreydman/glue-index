@@ -1324,6 +1324,11 @@ th[aria-sort] .sort {
     display: none;
   }
 
+  /* phrases may break on a phone, where one can be wider than the screen */
+  .page-sub .nowrap {
+    white-space: normal;
+  }
+
   .nav-link {
     padding: 0 8px;
   }
