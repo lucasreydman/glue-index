@@ -4,6 +4,8 @@ import { ArrowDown, ArrowUp, Search } from "lucide-react";
 import Link from "next/link";
 import { ViewTransition, startTransition, useMemo, useState } from "react";
 import { count, money, signed } from "@/lib/format";
+import { useLazyRows } from "./useLazyRows";
+
 
 export type ValueRow = {
   rank: number;
@@ -38,6 +40,8 @@ export function ValueTable({ rows }: { rows: ValueRow[] }) {
       return (sort.desc ? -order : order) || a.rank - b.rank;
     });
   }, [rows, query, sort]);
+
+  const { limit, more, sentinel } = useLazyRows(visible.length);
 
   const header = (key: SortKey, label: string, title?: string, className = "num") => {
     const active = sort.key === key;
@@ -103,7 +107,7 @@ export function ValueTable({ rows }: { rows: ValueRow[] }) {
               </tr>
             </thead>
             <tbody>
-              {visible.map((r) => (
+              {visible.slice(0, limit).map((r) => (
                 <tr key={r.id}>
                   <td className="num col-rank">{r.rank}</td>
                   <th scope="row" className="col-name">
@@ -127,6 +131,11 @@ export function ValueTable({ rows }: { rows: ValueRow[] }) {
             </tbody>
           </table>
           {visible.length === 0 && <p className="empty">No player matches “{query}”</p>}
+          {more && (
+            <div ref={sentinel} className="more-rows">
+              Showing {limit} of {count(visible.length)}
+            </div>
+          )}
         </div>
       </ViewTransition>
     </section>

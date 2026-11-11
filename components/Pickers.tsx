@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { monthLabel, shortDate } from "@/lib/format";
+import { NAVIGATE_EVENT } from "./NavProgress";
+
+const announce = () => window.dispatchEvent(new Event(NAVIGATE_EVENT));
 
 type StepProps = { href?: string; label: string; back?: boolean };
 
@@ -46,7 +49,11 @@ export function DateNav({ date, dates }: DateNavProps) {
       <Step href={prev && `/night/${prev}`} label="Previous night" back />
       <label className="select">
         <span className="sr-only">Jump to a night</span>
-        <select value={date} onChange={(e) => startTransition(() => router.push(`/night/${e.target.value}`))}>
+        <select value={date} onChange={(e) => {
+            const target = `/night/${e.target.value}`;
+            announce();
+            startTransition(() => router.push(target));
+          }}>
           {[...months].map(([month, days]) => (
             <optgroup key={month} label={monthLabel(month)}>
               {days.map((d) => (
@@ -79,7 +86,11 @@ export function SeasonNav({ season, seasons, suffix = "" }: SeasonNavProps) {
       <Step href={prev && href(prev)} label="Previous season" back />
       <label className="select">
         <span className="sr-only">Jump to a season</span>
-        <select value={season} onChange={(e) => startTransition(() => router.push(href(e.target.value)))}>
+        <select value={season} onChange={(e) => {
+            const target = href(e.target.value);
+            announce();
+            startTransition(() => router.push(target));
+          }}>
           {seasons.map((s) => (
             <option key={s} value={s}>
               {s}

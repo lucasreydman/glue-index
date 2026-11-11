@@ -5,19 +5,19 @@ import Link from "next/link";
 import { ViewTransition, startTransition, useMemo, useState } from "react";
 import { count, signed } from "@/lib/format";
 import type { CareerRow } from "@/lib/types";
+import { useLazyRows } from "./useLazyRows";
 
-const PAGE = 100;
 
 export function CareerTable({ rows }: { rows: CareerRow[] }) {
   const [query, setQuery] = useState("");
   const [bottom, setBottom] = useState(false);
-  const [limit, setLimit] = useState(PAGE);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     const filtered = q ? rows.filter((r) => r.name.toLowerCase().includes(q)) : rows;
     return bottom ? [...filtered].reverse() : filtered;
   }, [rows, query, bottom]);
+  const { limit, more, sentinel } = useLazyRows(matches.length);
   const visible = matches.slice(0, limit);
   const scale = Math.max(1, rows[0]?.glue ?? 1, -(rows.at(-1)?.glue ?? 0));
 
@@ -39,10 +39,7 @@ export function CareerTable({ rows }: { rows: CareerRow[] }) {
             type="search"
             placeholder="Search"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setLimit(PAGE);
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             autoComplete="off"
           />
         </label>
@@ -104,13 +101,13 @@ export function CareerTable({ rows }: { rows: CareerRow[] }) {
           </tbody>
         </table>
         {visible.length === 0 && <p className="empty">No player matches “{query}”</p>}
+        {more && (
+          <div ref={sentinel} className="more-rows">
+            Showing {limit} of {count(matches.length)}
+          </div>
+        )}
       </div>
       </ViewTransition>
-      {matches.length > limit && (
-        <button type="button" className="button more" onClick={() => setLimit(limit + 400)}>
-          Show more of {count(matches.length)}
-        </button>
-      )}
     </section>
   );
 }

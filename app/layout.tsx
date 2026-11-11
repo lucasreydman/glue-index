@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Sofia_Sans, Sofia_Sans_Extra_Condensed, Sometype_Mono } from "next/font/google";
 import Link from "next/link";
 import { NavLinks } from "@/components/NavLinks";
+import { NavProgress } from "@/components/NavProgress";
+import { getIndex } from "@/lib/data";
 import { ACRONYM } from "@/lib/formula";
 import "./globals.css";
 
@@ -15,7 +17,8 @@ export const metadata: Metadata = {
     "GLUE (Grit Less Usage & Errors) ranks NBA players by the possessions they win and the mistakes they avoid. Scored every night, every season since 2005-06.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const index = await getIndex();
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body>
@@ -33,8 +36,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="brand-name">GLUE</span>
               <span className="brand-sub">{ACRONYM}</span>
             </Link>
-            <NavLinks />
+            <NavLinks season={index.seasons[0]} />
           </div>
+          <NavProgress />
         </header>
         <main id="main" className="wrap main">
           {children}

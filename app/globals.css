@@ -140,7 +140,34 @@ select {
 /* ------------------------------------------------------------ header */
 
 .site-header {
+  position: relative;
   border-bottom: 1px solid var(--line);
+}
+
+/* Navigation progress: starts on the click, completes when the page lands. */
+.nav-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--ink);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+}
+
+.nav-progress[data-state="loading"] {
+  opacity: 1;
+  transform: scaleX(0.8);
+  /* a short delay keeps it out of the way when the page is already loaded */
+  transition: transform 4s cubic-bezier(0.1, 0.7, 0.2, 1) 80ms, opacity 80ms linear 80ms;
+}
+
+.nav-progress[data-state="done"] {
+  opacity: 0;
+  transform: scaleX(1);
+  transition: transform 200ms var(--ease), opacity 200ms linear 200ms;
 }
 
 .site-header-inner {
@@ -212,11 +239,23 @@ select {
   color: var(--ink);
 }
 
+.nav-link {
+  position: relative;
+}
+
 .nav-link[aria-current="page"] {
   color: var(--ink);
   font-weight: 500;
-  box-shadow: inset 0 -2px 0 var(--ink);
-  border-radius: 0;
+}
+
+/* the active-tab underline is one element that slides from tab to tab */
+.nav-underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--ink);
 }
 
 /* ------------------------------------------------------------ page */
@@ -225,13 +264,92 @@ select {
   flex: 1;
   padding-top: 40px;
   padding-bottom: 80px;
-  animation: rise 400ms var(--ease) both;
 }
 
-@keyframes rise {
+/* One entrance per page: its sections arrive top to bottom, a beat apart. */
+.page > * {
+  animation: arrive 520ms var(--ease) both;
+}
+
+.page > :nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.page > :nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.page > :nth-child(4) {
+  animation-delay: 180ms;
+}
+
+.page > :nth-child(n + 5) {
+  animation-delay: 240ms;
+}
+
+@keyframes arrive {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
+  }
+}
+
+/* Loading skeleton: the outline of a board. It waits a moment so quick loads never flash it. */
+.skeleton {
+  animation: skeleton-in 300ms linear 150ms both;
+}
+
+.skeleton > * {
+  animation: none;
+}
+
+.bone {
+  background: var(--raised);
+  border-radius: var(--radius-control);
+  animation: breathe 1.4s ease-in-out infinite alternate;
+}
+
+.bone-meta {
+  width: 160px;
+  height: 16px;
+}
+
+.bone-title {
+  width: min(520px, 80vw);
+  height: 64px;
+  margin-top: 8px;
+}
+
+.bone-sub {
+  width: min(400px, 60vw);
+  height: 20px;
+  margin-top: 12px;
+}
+
+.bone-card {
+  height: 560px;
+  border-radius: var(--radius-card);
+}
+
+.bone-list {
+  display: grid;
+  gap: 12px;
+  padding-top: 24px;
+}
+
+.bone-row {
+  height: 44px;
+}
+
+@keyframes skeleton-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes breathe {
+  to {
+    opacity: 0.55;
   }
 }
 
@@ -954,6 +1072,17 @@ th[aria-sort] .sort {
   color: var(--ink-2);
 }
 
+.more-rows {
+  position: sticky;
+  left: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-3);
+}
+
 .board-careers td,
 .board-careers th {
   padding: 0 12px;
@@ -1209,13 +1338,12 @@ th[aria-sort] .sort {
 }
 
 ::view-transition-old(.page) {
-  animation: 140ms ease-in both vt-fade reverse;
+  animation: 180ms ease-in both vt-fade reverse;
 }
 
+/* the new page's own sections do the rising, so here it only has to appear */
 ::view-transition-new(.page) {
-  animation:
-    260ms var(--ease) 120ms both vt-fade,
-    420ms var(--ease) both vt-rise;
+  animation: 120ms linear 160ms both vt-fade;
 }
 
 ::view-transition-old(.nav-forward),
@@ -1264,6 +1392,12 @@ th[aria-sort] .sort {
 
 ::view-transition-old(site-header) {
   display: none;
+}
+
+::view-transition-group(nav-current) {
+  z-index: 101;
+  animation-duration: 360ms;
+  animation-timing-function: var(--ease);
 }
 
 ::view-transition-new(site-header) {

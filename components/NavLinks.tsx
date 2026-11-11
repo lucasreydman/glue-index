@@ -12,7 +12,7 @@ const LINKS = [
   { href: "/method", label: "Method", match: (p: string) => p.startsWith("/method") },
 ];
 
-export function NavLinks() {
+export function NavLinks({ season }: { season: string }) {
   const pathname = usePathname();
   useEffect(() => {
     hydration.done = true;
@@ -20,8 +20,15 @@ export function NavLinks() {
   return (
     <nav className="nav" aria-label="Main">
       {LINKS.map((l) => (
-        <Link key={l.href} href={l.href} className="nav-link" aria-current={l.match(pathname) ? "page" : undefined}>
+        <Link
+          key={l.href}
+          // Straight to the latest season: going through the /season redirect costs a second navigation.
+          href={l.href === "/season" ? `/season/${season}` : l.href}
+          className="nav-link"
+          aria-current={l.match(pathname) ? "page" : undefined}
+        >
           {l.label}
+          {l.match(pathname) && <span className="nav-underline" style={{ viewTransitionName: "nav-current" }} />}
         </Link>
       ))}
     </nav>
