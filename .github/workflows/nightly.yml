@@ -1,0 +1,39 @@
+name: Nightly GLUE
+
+on:
+  schedule:
+    # 09:15 UTC is 4:15am ET in winter and 5:15am ET in summer, after the West Coast games end.
+    - cron: "15 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Pull last night from pbpstats
+        run: node scripts/fetch.ts nightly
+      - name: Check that everything still scores
+        run: node scripts/build-data.ts
+      - name: Commit raw data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw
+          if git diff --cached --quiet; then
+            echo "No new data"
+          else
+            git commit -m "data: nightly pull $(date -u +%F)"
+            git push
+          fi

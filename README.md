@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GLUE Index
 
-## Getting Started
+**G**rit **L**ess **U**sage & **E**rrors. An NBA index for the players who win possessions and avoid
+mistakes without needing the ball: seven credits, seven debits, each z-scored and weighted.
 
-First, run the development server:
+The site shows the top glue guys of every night, season leaderboards back to 2005-06, career totals
+and a page per player. The full method is on the site's `/method` page and the weights live in
+[`lib/formula.ts`](lib/formula.ts).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## How it works
+
+```
+pbpstats.com ──▶ scripts/fetch.ts ──▶ data/raw/        (committed)
+                                         │
+                 scripts/build-data.ts ◀─┘
+                         │
+                         ├──▶ data/site/     scored JSON the pages are built from
+                         └──▶ public/data/   the same boards as a public JSON API
+                                  │
+                              next build ──▶ static site on Vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Nightly.** `.github/workflows/nightly.yml` runs at 09:15 UTC. It pulls every game date not yet
+  stored, re-pulls the two most recent nights for stat corrections, refreshes the current season's
+  totals and commits `data/raw`. The push triggers a Vercel build, which scores everything again.
+- **Raw data is the only thing stored.** Scores are always recomputed from it, so a formula change
+  needs no re-fetch.
+- **Single games** are scored against the season to date, not the night's slate. See `/method`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Run the site locally (run `pnpm data` first) |
+| `pnpm data` | Score `data/raw` into `data/site` and `public/data` |
+| `pnpm build` | `pnpm data`, then build the static site |
+| `pnpm nightly` | What the cron job runs: pull new nights and the current season |
+| `node scripts/fetch.ts nights 2025-26` | Backfill every night of a season. Resumable |
+| `node scripts/fetch.ts seasons 2005-06 2026-27` | Refresh season totals for a range |
 
-## Learn More
+Requires Node 24 or later, which runs the TypeScript scripts directly.
 
-To learn more about Next.js, take a look at the following resources:
+## JSON
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/data/latest.json`: the most recent night
+- `/data/glue-YYYY-MM-DD.json`: any scored night
+- `/data/season-YYYY-YY.json`: a season leaderboard
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Data from [pbpstats.com](https://www.pbpstats.com). Not affiliated with the NBA.

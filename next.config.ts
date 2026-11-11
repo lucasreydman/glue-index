@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-};
+// Every page is generated from static JSON at build time, so the site needs no runtime data layer.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
