@@ -24,6 +24,9 @@ import type {
 } from "../lib/types.ts";
 import { RAW, ROOT, listDirs, listJson, readJson, writeJson } from "./lib/pbp.ts";
 import type { RawNight, RawPlayer, RawSeason } from "./lib/pbp.ts";
+import { nameKey, salaryPath } from "./lib/salaries.ts";
+import type { RawSalaries } from "./lib/salaries.ts";
+import { existsSync } from "node:fs";
 
 const SITE = path.join(ROOT, "data", "site");
 const PUBLIC = path.join(ROOT, "public", "data");
@@ -106,6 +109,20 @@ for (const file of seasonFiles) {
   const dates = nightDates.get(raw.season) ?? [];
   const asOf = dates.at(-1) ?? null;
   const isLatest = file === seasonFiles.at(-1);
+  const lines = toLines(qualified, d);
+  let salariesAsOf: string | null = null;
+  if (existsSync(salaryPath(raw.season))) {
+    const salaries = await readJson<RawSalaries>(salaryPath(raw.season));
+    const byName = new Map(salaries.players.map((p) => [nameKey(p.name), p]));
+    salariesAsOf = salaries.fetchedAt.slice(0, 10);
+    let missing = 0;
+    for (const line of lines) {
+      const contract = byName.get(nameKey(line.name));
+      if (contract) Object.assign(line, { salary: contract.salary, aav: contract.aav });
+      else missing++;
+    }
+    console.log(`${raw.season}: ${lines.length - missing} of ${lines.length} qualified players matched to a contract`);
+  }
   boards.push({
     season: raw.season,
     inProgress: isLatest && teamGames < SEASON_GAMES,
@@ -114,7 +131,8 @@ for (const file of seasonFiles) {
     minMinutes,
     mean: d.mean.map((x) => round(x, 3)),
     sd: d.sd.map((x) => round(x, 3)),
-    players: toLines(qualified, d),
+    salariesAsOf,
+    players: lines,
   });
 }
 boards.sort((a, b) => b.season.localeCompare(a.season));
@@ -271,6 +289,7 @@ const index: SiteIndex = {
   generatedAt: new Date().toISOString(),
   latest: nights.at(-1)?.date ?? "",
   seasons: boards.map((b) => b.season),
+  valueSeasons: boards.filter((b) => b.salariesAsOf).map((b) => b.season),
   nightSeasons: [...nightSeasonsAsc].reverse(),
   nights: nights.map((n) => n.date),
   playerIds: [...files.keys()],

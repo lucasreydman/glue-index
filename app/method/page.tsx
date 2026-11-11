@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Ledger } from "@/components/Ledger";
+import { Page } from "@/components/Page";
 import { getIndex, getLatestCompleteSeason } from "@/lib/data";
-import { BASELINE_MIN_GAMES, COMPONENTS, USAGE_INDEX, VERSION } from "@/lib/formula";
+import { BASELINE_MIN_GAMES, COMPONENTS, STAR_USAGE, USAGE_INDEX, VERSION } from "@/lib/formula";
 import { count, signed } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Method" };
@@ -47,7 +48,7 @@ export default async function MethodPage() {
   const breakEven = (miss / (make + miss)) * 100;
 
   return (
-    <>
+    <Page id="method">
       <header className="page-head">
         <div>
           <p className="meta">Method, version {VERSION}</p>
@@ -201,6 +202,23 @@ export default async function MethodPage() {
           careers start there. Seasons before that are missing two of the fourteen columns and are not scored.
         </p>
 
+        <h2>Stars and value</h2>
+        <p>Every season board has two extra views. Neither changes a score. They only change who is on the list.</p>
+        <h3>Gluiest stars</h3>
+        <p>
+          The players at {STAR_USAGE}% usage or more, ranked by GLUE. Usage is the heaviest debit in the formula, so
+          these players start a long way behind. A star who still scores above zero is doing the small things on top
+          of carrying an offense, and there are only a handful each year.
+        </p>
+        <h3>Value</h3>
+        <p>
+          GLUE divided by this season&rsquo;s salary in millions, for players with a positive score. Players below
+          zero are left out, because a ratio of a negative score to a salary does not rank anything sensibly. Salary
+          and average annual value come from Basketball Reference&rsquo;s contracts table. It lists current deals
+          only, so the value view exists for the current season and not for past ones. Two-way players have no
+          listed salary and are left out.
+        </p>
+
         <h2>Calibration</h2>
         <p>The weights were audited against a correlation matrix, per-event values and a ±20% perturbation test.</p>
         <ul>
@@ -264,6 +282,6 @@ export default async function MethodPage() {
           within each season, so comparisons inside a season hold, but treat small gaps between eras with care.
         </p>
       </div>
-    </>
+    </Page>
   );
 }

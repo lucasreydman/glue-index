@@ -153,5 +153,8 @@ export const GAME_MIN_SECONDS = 15 * 60;
 /** A night's baseline is topped up from neighbouring games until it has this many player-games. */
 export const BASELINE_MIN_GAMES = 3000;
 
+/** A "star" for the stars view: a player finishing at least this share of possessions. */
+export const STAR_USAGE = 27;
+
 export const ACRONYM = "Grit Less Usage & Errors";
 export const VERSION = "1.0";

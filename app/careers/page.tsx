@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Page } from "@/components/Page";
 import { CareerTable } from "@/components/CareerTable";
 import { getCareers, getIndex } from "@/lib/data";
 import { count } from "@/lib/format";
@@ -10,7 +11,7 @@ export default async function CareersPage() {
   const { first, last } = index.careerSeasons;
 
   return (
-    <>
+    <Page id="careers">
       <header className="page-head">
         <div>
           <p className="meta">Career leaderboard</p>
@@ -24,6 +25,6 @@ export default async function CareersPage() {
         </div>
       </header>
       <CareerTable rows={careers} />
-    </>
+    </Page>
   );
 }

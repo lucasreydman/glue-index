@@ -2,7 +2,7 @@
 
 import { ArrowDown, ArrowUp, Search } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { ViewTransition, startTransition, useMemo, useState } from "react";
 import { COMPONENTS } from "@/lib/formula";
 import { CREDIT_INDEXES, DEBIT_INDEXES, componentValue, count, signed } from "@/lib/format";
 
@@ -55,7 +55,7 @@ export function BoardTable({ rows, kind, title }: Props) {
         <button
           type="button"
           className="sort"
-          onClick={() => setSort({ key, desc: active ? !sort.desc : key !== "name" })}
+          onClick={() => startTransition(() => setSort({ key, desc: active ? !sort.desc : key !== "name" }))}
         >
           {label}
           {active && (sort.desc ? <ArrowDown size={12} strokeWidth={1.5} /> : <ArrowUp size={12} strokeWidth={1.5} />)}
@@ -83,6 +83,7 @@ export function BoardTable({ rows, kind, title }: Props) {
         </label>
       </div>
 
+      <ViewTransition update="swap" default="none">
       <div className="table-scroll">
         <table className="board">
           <thead>
@@ -150,6 +151,7 @@ export function BoardTable({ rows, kind, title }: Props) {
         </table>
         {visible.length === 0 && <p className="empty">No player matches “{query}”</p>}
       </div>
+      </ViewTransition>
     </section>
   );
 }

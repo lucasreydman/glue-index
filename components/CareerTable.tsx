@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { ViewTransition, startTransition, useMemo, useState } from "react";
 import { count, signed } from "@/lib/format";
 import type { CareerRow } from "@/lib/types";
 
@@ -25,10 +25,10 @@ export function CareerTable({ rows }: { rows: CareerRow[] }) {
     <section className="board-section">
       <div className="board-tools">
         <div className="toggle" role="group" aria-label="Order">
-          <button type="button" aria-pressed={!bottom} onClick={() => setBottom(false)}>
+          <button type="button" aria-pressed={!bottom} onClick={() => startTransition(() => setBottom(false))}>
             Highest
           </button>
-          <button type="button" aria-pressed={bottom} onClick={() => setBottom(true)}>
+          <button type="button" aria-pressed={bottom} onClick={() => startTransition(() => setBottom(true))}>
             Lowest
           </button>
         </div>
@@ -48,6 +48,7 @@ export function CareerTable({ rows }: { rows: CareerRow[] }) {
         </label>
       </div>
 
+      <ViewTransition update="swap" default="none">
       <div className="table-scroll">
         <table className="board board-careers">
           <thead>
@@ -104,6 +105,7 @@ export function CareerTable({ rows }: { rows: CareerRow[] }) {
         </table>
         {visible.length === 0 && <p className="empty">No player matches “{query}”</p>}
       </div>
+      </ViewTransition>
       {matches.length > limit && (
         <button type="button" className="button more" onClick={() => setLimit(limit + 400)}>
           Show more of {count(matches.length)}

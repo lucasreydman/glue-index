@@ -8,6 +8,11 @@ export function signed(x: number, places = 2): string {
   return (x < 0 ? MINUS : "+") + fixed;
 }
 
+/** Dollars as millions: $62.6M. */
+export function money(x: number): string {
+  return `$${(x / 1e6).toFixed(1)}M`;
+}
+
 export function count(x: number): string {
   return Math.round(x).toLocaleString("en-US");
 }
@@ -24,6 +29,13 @@ export function longDate(date: string): string {
 
 export function mediumDate(date: string): string {
   return utc(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
+/** "Apr 8 to Nov 8, 2026", or with both years when the range crosses one. */
+export function dateRange(from: string, to: string): string {
+  if (from.slice(0, 4) !== to.slice(0, 4)) return `${mediumDate(from)} to ${mediumDate(to)}`;
+  const start = utc(from).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  return `${start} to ${mediumDate(to)}`;
 }
 
 export function shortDate(date: string): string {

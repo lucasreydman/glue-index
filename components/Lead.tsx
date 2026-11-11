@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { count, signed } from "@/lib/format";
 import type { Line } from "@/lib/types";
+import { CountUp } from "./CountUp";
 import { Ledger } from "./Ledger";
 import { Strip, stripScale } from "./Strip";
 
@@ -55,7 +56,9 @@ export function Lead({ lines, kind, runnersTitle }: Props) {
           </div>
           <p className="lead-score">
             <span className="meta">GLUE</span>
-            <span className="figure">{signed(first.glue)}</span>
+            <span className={`figure ${first.glue < 0 ? "down" : ""}`}>
+              <CountUp value={first.glue} />
+            </span>
           </p>
         </header>
         <Ledger v={first.v} c={first.c} glue={first.glue} />

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CountUp } from "@/components/CountUp";
 import { Ledger } from "@/components/Ledger";
+import { Page } from "@/components/Page";
 import { Strip, stripScale } from "@/components/Strip";
 import { getCareers, getIndex, getPlayer } from "@/lib/data";
 import { COMPONENTS } from "@/lib/formula";
-import { CREDIT_INDEXES, DEBIT_INDEXES, componentValue, count, shortDate, signed } from "@/lib/format";
+import { CREDIT_INDEXES, DEBIT_INDEXES, componentValue, count, money, shortDate, signed } from "@/lib/format";
 import type { PlayerGame, PlayerSeason } from "@/lib/types";
 
 type Props = { params: Promise<{ id: string }> };
@@ -102,7 +104,7 @@ export default async function PlayerPage({ params }: Props) {
   const teams = [...new Set(seasons.map((s) => s.team))];
 
   return (
-    <>
+    <Page id={`player-${id}`}>
       <header className="page-head">
         <div>
           <p className="meta">Player</p>
@@ -113,6 +115,15 @@ export default async function PlayerPage({ params }: Props) {
                   seasons[0].season
                 } to ${seasons.at(-1)!.season}`
               : "No qualified season yet. Single games at 15+ minutes are listed below"}
+            {current?.salary && current.aav && (
+              <>
+                {" "}
+                ·{" "}
+                <span className="nowrap">
+                  {money(current.salary)} this season, {money(current.aav)} a year on his deal
+                </span>
+              </>
+            )}
           </p>
         </div>
       </header>
@@ -123,21 +134,27 @@ export default async function PlayerPage({ params }: Props) {
             <>
               <div>
                 <dt>Career GLUE</dt>
-                <dd className={career.glue < 0 ? "down" : undefined}>{signed(career.glue)}</dd>
+                <dd className={career.glue < 0 ? "down" : undefined}>
+                  <CountUp value={career.glue} />
+                </dd>
                 <dd className="figure-note">
                   rank {count(career.rank)} of {count(careers.length)}
                 </dd>
               </div>
               <div>
                 <dt>Per season</dt>
-                <dd className={career.avg < 0 ? "down" : undefined}>{signed(career.avg)}</dd>
+                <dd className={career.avg < 0 ? "down" : undefined}>
+                  <CountUp value={career.avg} />
+                </dd>
                 <dd className="figure-note">
                   over {career.seasons} completed {career.seasons === 1 ? "season" : "seasons"}
                 </dd>
               </div>
               <div>
                 <dt>Best season</dt>
-                <dd className={career.best.glue < 0 ? "down" : undefined}>{signed(career.best.glue)}</dd>
+                <dd className={career.best.glue < 0 ? "down" : undefined}>
+                  <CountUp value={career.best.glue} />
+                </dd>
                 <dd className="figure-note">
                   <Link href={`/season/${career.best.season}`}>{career.best.season}</Link>
                 </dd>
@@ -147,7 +164,9 @@ export default async function PlayerPage({ params }: Props) {
           {current && (
             <div>
               <dt>This season</dt>
-              <dd className={current.glue < 0 ? "down" : undefined}>{signed(current.glue)}</dd>
+              <dd className={current.glue < 0 ? "down" : undefined}>
+                <CountUp value={current.glue} />
+              </dd>
               <dd className="figure-note">
                 rank {current.rank} of {current.of}, in progress
               </dd>
@@ -258,6 +277,6 @@ export default async function PlayerPage({ params }: Props) {
           <GameList title="Latest nights" games={latestGames} />
         </section>
       )}
-    </>
+    </Page>
   );
 }

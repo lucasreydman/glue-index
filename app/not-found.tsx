@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Page } from "@/components/Page";
 
 export default function NotFound() {
   return (
+    <Page id="not-found">
     <header className="page-head">
       <div>
         <p className="meta">404</p>
@@ -12,5 +14,6 @@ export default function NotFound() {
         </p>
       </div>
     </header>
+    </Page>
   );
 }

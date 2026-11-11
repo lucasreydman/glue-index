@@ -20,6 +20,9 @@ export type Line = {
   ast: number;
   opp?: string;
   home?: boolean;
+  /** This season's salary and the deal's average annual value, in dollars. Current season only. */
+  salary?: number;
+  aav?: number;
 };
 
 export type Baseline = { games: number; from: string; to: string; mean: number[]; sd: number[] };
@@ -41,6 +44,8 @@ export type SeasonBoard = {
   minMinutes: number;
   mean: number[];
   sd: number[];
+  /** When contract data was last pulled, if this season has any. */
+  salariesAsOf: string | null;
   players: Line[];
 };
 
@@ -85,6 +90,8 @@ export type SiteIndex = {
   latest: string;
   /** Scored seasons, newest first. */
   seasons: string[];
+  /** Seasons that have contract data, for the value view. */
+  valueSeasons: string[];
   /** Seasons with night-by-night data, newest first. */
   nightSeasons: string[];
   /** Every scored night, oldest first. */

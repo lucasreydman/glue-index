@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <header className="site-header">
+        <header className="site-header" style={{ viewTransitionName: "site-header" }}>
           <div className="wrap site-header-inner">
             <Link href="/" className="brand" aria-label="GLUE Index home">
               <svg className="brand-mark" viewBox="0 0 20 20" aria-hidden="true">

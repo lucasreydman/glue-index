@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { hydration } from "@/lib/hydrated";
 
 const LINKS = [
   { href: "/", label: "Nights", match: (p: string) => p === "/" || p.startsWith("/night") },
@@ -12,6 +14,9 @@ const LINKS = [
 
 export function NavLinks() {
   const pathname = usePathname();
+  useEffect(() => {
+    hydration.done = true;
+  }, []);
   return (
     <nav className="nav" aria-label="Main">
       {LINKS.map((l) => (

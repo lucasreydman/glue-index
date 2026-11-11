@@ -125,6 +125,10 @@ select {
   color: var(--ink-3);
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .up {
   color: var(--credit);
 }
@@ -195,7 +199,12 @@ select {
   align-items: center;
   border-radius: var(--radius-control);
   color: var(--ink-2);
-  transition: background-color 140ms var(--ease), color 140ms var(--ease);
+  transition: background-color 140ms var(--ease), color 140ms var(--ease), box-shadow 140ms var(--ease),
+    transform 140ms var(--ease);
+}
+
+.nav-link:active {
+  transform: scale(0.97);
 }
 
 .nav-link:hover {
@@ -250,6 +259,7 @@ select {
 
 .page-sub {
   margin-top: 8px;
+  text-wrap: pretty;
   max-width: 44rem;
   color: var(--ink-2);
 }
@@ -283,7 +293,8 @@ select {
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-control);
   background: var(--card);
-  transition: background-color 140ms var(--ease), transform 140ms var(--ease);
+  transition: background-color 140ms var(--ease), color 140ms var(--ease), border-color 140ms var(--ease),
+    opacity 140ms var(--ease), transform 140ms var(--ease);
 }
 
 .step {
@@ -306,6 +317,11 @@ a.step:hover,
 a.step:active,
 .button:active {
   transform: scale(0.97);
+}
+
+.picker[data-pending] .select select {
+  opacity: 0.5;
+  cursor: progress;
 }
 
 .select select {
@@ -332,22 +348,58 @@ a.step:active,
   display: flex;
 }
 
-.toggle button {
+.views {
+  margin-bottom: 24px;
+}
+
+.toggle button,
+.toggle a {
   padding: 0 12px;
   cursor: pointer;
   color: var(--ink-2);
 }
 
-.toggle button:first-child {
-  border-radius: var(--radius-control) 0 0 var(--radius-control);
+.toggle a {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  transition: background-color 140ms var(--ease), color 140ms var(--ease), transform 140ms var(--ease);
 }
 
-.toggle button:last-child {
-  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+.toggle a + a {
   border-left: 0;
 }
 
-.toggle button[aria-pressed="true"] {
+.toggle button:hover,
+.toggle a:hover {
+  background: var(--raised);
+}
+
+.toggle button:active,
+.toggle a:active {
+  transform: scale(0.98);
+}
+
+.toggle button:first-child,
+.toggle a:first-child {
+  border-radius: var(--radius-control) 0 0 var(--radius-control);
+}
+
+.toggle button:last-child,
+.toggle a:last-child {
+  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+}
+
+.toggle button + button {
+  border-left: 0;
+}
+
+.toggle button[aria-pressed="true"],
+.toggle button[aria-pressed="true"]:hover,
+.toggle a[aria-current="page"],
+.toggle a[aria-current="page"]:hover {
   background: var(--ink);
   border-color: var(--ink);
   color: var(--paper);
@@ -383,6 +435,28 @@ a.step:active,
 .bar {
   display: block;
   height: 8px;
+  /* every bar draws itself out from the centre line when it arrives */
+  animation: draw 600ms var(--ease) both;
+}
+
+.bar-up {
+  transform-origin: left center;
+}
+
+.bar-down {
+  transform-origin: right center;
+}
+
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes draw-y {
+  from {
+    transform: scaleY(0);
+  }
 }
 
 .bar-up {
@@ -968,7 +1042,13 @@ th[aria-sort] .sort {
 
 .season-chart .bar {
   width: 100%;
+  animation-name: draw-y;
+  transform-origin: center bottom;
   transition: opacity 140ms var(--ease);
+}
+
+.season-chart .bar-down {
+  transform-origin: center top;
 }
 
 .season-chart a:hover .bar {
@@ -1121,6 +1201,93 @@ th[aria-sort] .sort {
   margin-top: 16px;
 }
 
+/* ------------------------------------------------------------ view transitions */
+
+/* Old content leaves fast, new content arrives a beat later and settles. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.page) {
+  animation: 140ms ease-in both vt-fade reverse;
+}
+
+::view-transition-new(.page) {
+  animation:
+    260ms var(--ease) 120ms both vt-fade,
+    420ms var(--ease) both vt-rise;
+}
+
+::view-transition-old(.nav-forward),
+::view-transition-old(.nav-back) {
+  animation:
+    140ms ease-in both vt-fade reverse,
+    360ms var(--ease) both vt-slide reverse;
+}
+
+::view-transition-new(.nav-forward),
+::view-transition-new(.nav-back) {
+  animation:
+    260ms var(--ease) 120ms both vt-fade,
+    420ms var(--ease) both vt-slide;
+}
+
+::view-transition-old(.nav-forward),
+::view-transition-new(.nav-back) {
+  --slide-offset: -32px;
+}
+
+::view-transition-new(.nav-forward),
+::view-transition-old(.nav-back) {
+  --slide-offset: 32px;
+}
+
+/* A table re-sort is the same place with different content: a plain crossfade. */
+::view-transition-old(.swap) {
+  animation: 120ms ease-in both vt-fade reverse;
+}
+
+::view-transition-new(.swap) {
+  animation: 240ms var(--ease) 80ms both vt-fade;
+}
+
+::view-transition-group(.swap) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease);
+}
+
+/* The header never moves, so the eye has a fixed point. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-rise {
+  from {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+}
+
 /* ------------------------------------------------------------ footer */
 
 .site-footer {
@@ -1254,5 +1421,12 @@ th[aria-sort] .sort {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

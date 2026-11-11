@@ -1,6 +1,7 @@
 import { getIndex, getNight } from "@/lib/data";
-import { count, longDate, mediumDate } from "@/lib/format";
+import { count, dateRange, longDate } from "@/lib/format";
 import { Board } from "./Board";
+import { Page } from "./Page";
 import { DateNav } from "./Pickers";
 
 export async function NightView({ date }: { date: string }) {
@@ -8,7 +9,7 @@ export async function NightView({ date }: { date: string }) {
   const year = date.slice(0, 4);
 
   return (
-    <>
+    <Page id={`night-${date}`}>
       <header className="page-head">
         <div>
           <p className="meta">Glue guys of the night</p>
@@ -16,9 +17,12 @@ export async function NightView({ date }: { date: string }) {
             {longDate(date)} <span className="page-title-dim">{year}</span>
           </h1>
           <p className="page-sub">
-            {night.games.length} {night.games.length === 1 ? "game" : "games"} · {night.players.length} players at 15+
-            minutes · scored against {count(night.baseline.games)} player-games from {mediumDate(night.baseline.from)}{" "}
-            to {mediumDate(night.baseline.to)}
+            <span className="nowrap">
+              {night.games.length} {night.games.length === 1 ? "game" : "games"}
+            </span>{" "}
+            · <span className="nowrap">{night.players.length} players at 15+ minutes</span> ·{" "}
+            <span className="nowrap">scored against {count(night.baseline.games)} player-games,</span>{" "}
+            <span className="nowrap">{dateRange(night.baseline.from, night.baseline.to)}</span>
           </p>
         </div>
         <DateNav date={date} dates={index.nights} />
@@ -38,6 +42,6 @@ export async function NightView({ date }: { date: string }) {
       </ul>
 
       <Board lines={night.players} kind="night" runnersTitle="Next nine" tableTitle="Full slate" />
-    </>
+    </Page>
   );
 }
