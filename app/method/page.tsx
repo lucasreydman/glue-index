@@ -61,28 +61,25 @@ export default async function MethodPage() {
       </header>
 
       <div className="prose">
-        <p className="acronym" aria-label="GLUE stands for Grit Less Usage and Errors">
+        <p className="acronym" aria-label="GLUE stands for Gritty, Low-Usage, Error-free">
           <span>
-            <b>G</b>rit
-          </span>
-          <span className="op">
-            <b>L</b>ess
+            <b>G</b>ritty
           </span>
           <span>
-            <b>U</b>sage
+            <b>L</b>ow-<b>U</b>sage
           </span>
-          <span className="op">&amp;</span>
           <span>
-            <b>E</b>rrors
+            <b>E</b>rror-free
           </span>
         </p>
 
         <h2>The name is the formula</h2>
         <p>
-          <strong>Grit</strong> is seven kinds of event that win a possession or points without a play being called for
-          you. <strong>Usage</strong> is the share of possessions a player finishes while on the floor.{" "}
-          <strong>Errors</strong> are six kinds of event that hand possessions or points back. GLUE is the first, less
-          the other two.
+          The three words are the three parts of the calculation. <strong>Gritty</strong> is seven kinds of event that
+          win a possession or points without a play being called for you. <strong>Low-usage</strong> is a penalty on
+          the share of possessions a player finishes while on the floor. <strong>Error-free</strong> is six kinds of
+          event that hand possessions or points back, each one a deduction. A high GLUE score means a player was all
+          three at once.
         </p>
         <p>
           Zero is the average qualified player. A positive score means a player gave his team more than he cost it in
