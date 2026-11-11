@@ -43,3 +43,6 @@ next-env.d.ts
 # scored output, rebuilt from data/raw by scripts/build-data.ts
 /data/site/
 /public/data/
+
+.vercel
+.env*
