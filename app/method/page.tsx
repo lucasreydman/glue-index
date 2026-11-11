@@ -61,7 +61,7 @@ export default async function MethodPage() {
       </header>
 
       <div className="prose">
-        <p className="acronym" aria-label="GLUE stands for Gritty, Low-Usage, Error-free">
+        <p className="acronym" aria-label="GLUE stands for Gritty, Low-Usage, Errorless">
           <span>
             <b>G</b>ritty
           </span>
@@ -77,7 +77,7 @@ export default async function MethodPage() {
         <p>
           The three words are the three parts of the calculation. <strong>Gritty</strong> is seven kinds of event that
           win a possession or points without a play being called for you. <strong>Low-usage</strong> is a penalty on
-          the share of possessions a player finishes while on the floor. <strong>Error-free</strong> is six kinds of
+          the share of possessions a player finishes while on the floor. <strong>Errorless</strong> is six kinds of
           event that hand possessions or points back, each one a deduction. A high GLUE score means a player was all
           three at once.
         </p>

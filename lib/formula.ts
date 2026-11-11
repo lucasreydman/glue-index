@@ -1,4 +1,4 @@
-// GLUE v1.0 — Gritty, Low-Usage, Error-free.
+// GLUE v1.0 — Gritty, Low-Usage, Errorless.
 // The single source of truth for components and weights. Imported by both the
 // data pipeline (scripts/) and the site, so it must stay dependency-free.
 
@@ -156,5 +156,5 @@ export const BASELINE_MIN_GAMES = 3000;
 /** A "star" for the stars view: a player finishing at least this share of possessions. */
 export const STAR_USAGE = 27;
 
-export const ACRONYM = "Gritty, Low-Usage, Error-free";
+export const ACRONYM = "Gritty, Low-Usage, Errorless";
 export const VERSION = "1.0";

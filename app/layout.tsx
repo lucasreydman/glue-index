@@ -14,7 +14,7 @@ const mono = Sometype_Mono({ subsets: ["latin"], variable: "--font-mono" });
 export const metadata: Metadata = {
   title: { default: "GLUE Index", template: "%s · GLUE Index" },
   description:
-    "GLUE (Gritty, Low-Usage, Error-free) ranks NBA players by the possessions they win and the mistakes they avoid. Scored every night, every season since 2005-06.",
+    "GLUE (Gritty, Low-Usage, Errorless) ranks NBA players by the possessions they win and the mistakes they avoid. Scored every night, every season since 2005-06.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
